@@ -1,51 +1,85 @@
 import arc.*;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 public class CPTLiam {
+	static boolean blnIsRunning = true;
+	static int intForLooper;
+		
+	static int intGenNumber = 0;
+	static int intGenSuit = 0;
+		
+	static int intNum = 0;
+		
+	static int intCardNumber = 0;
+	static int intSuitNumber = 0;
+		
+	// 1st card stats
+	static int intCard1Number = 0;
+	static int intCard1Suit = 0;
+	// 2nd card stats
+	static int intCard2Number = 0;
+	static int intCard2Suit = 0;
+	// 3rd card stats
+	static int intCard3Number = 0;
+	static int intCard3Suit = 0;
+	// 4th card stats
+	static int intCard4Number = 0;
+	static int intCard4Suit = 0;
+	// 5th card stats
+	static int intCard5Number = 0;
+	static int intCard5Suit = 0;
+		
+	static int intMoney = 1000;
 	
 	public static void main (String[] args) {
-		int intSecretNum = 0;
-		intSecretNum = (int)(Math.random() * 100);
+		Console con = new Console(1920, 1080);
+		System.out.println("Current working directory: " + System.getProperty("user.dir"));
+		con.setBackgroundColor(new Color(3, 80, 210));
+		BufferedImage imgClub = con.loadImage("clubIcon.png");
+		while (blnIsRunning == true) {
+			con.drawImage(imgClub, 370, 500);
+			con.drawImage(imgClub, 590, 500);
+			con.drawImage(imgClub, 810, 500);
+			con.drawImage(imgClub, 1030, 500);
+			con.drawImage(imgClub, 1250, 500);
+			con.repaint();
+			con.sleep(100);
 		
-		int intGenNumber = 0;
-		int intGenSuit = 0;
+		}
 		
-		int intCardNumber = 0;
-		int intSuitNumber = 0;
+		while (intCard1Number == 0 || intCard2Number == 0 || intCard3Number == 0 || intCard4Number == 0 || intCard5Number == 0) {
+			cardUpdater(con);
+		}
+	}
+	static void nGen(Console con) {
+		intGenNumber = (int)(Math.random() * 13 + 1); // Generates number from 1 to 13
+		intGenSuit = (int)(Math.random() * 4 + 1); // Generes a suit from 1 to 4
+		con.println(intGenNumber+" "+intGenSuit);
 		
-		// 1st card stats
-		int intCard1Number = 0;
-		int intCard1Suit = 0;
-		// 2nd card stats
-		int intCard2Number = 0;
-		int intCard2Suit = 0;
-		// 3rd card stats
-		int intCard3Number = 0;
-		int intCard3Suit = 0;
-		// 4th card stats
-		int intCard4Number = 0;
-		int intCard4Suit = 0;
-		// 5th card stats
-		int intCard5Number = 0;
-		int intCard5Suit = 0;
-		
-		int intMoney = 1000;
-		
-		
-		/* Clubs (1)
-		aceClub, 2Club, 3Club, 4Club, 5Club, 6Club, 7Club, 8Club, 9Club, 10Club, 
-		jackClub, queenClub, kingClub
-		* Diamonds (2)
-		aceDiamond, 2Diamond, 3Diamond, 4Diamond, 5Diamond, 6Diamond, 7Diamond, 8Diamond, 
-		9Diamond, 10Diamond, jackDiamond, queenDiamond, kingDiamond
-		* Aces (3)
-		aceHeart, 2Heart, 3Heart, 4Heart, 5Heart, 6Heart, 7Heart, 8Heart, 9Heart, 10Heart, 
-		jackHeart, queenHeart, kingHeart
-		* Spades (4)
-		aceSpade, 2Spade, 3Spade, 4Spade, 5Spade, 6Spade, 7Spade, 8Spade, 9Spade, 10Spade, 
-		jackSpade, queenSpade, kingSpade
-		*/
-		Console con = new Console();
-		con.println("Hello World!");
+	}
+	static void cardUpdater(Console con) {
+		if (intCard1Number == 0) {
+			nGen(con);
+			intCard1Number = intGenNumber;
+			intCard1Suit = intGenSuit;
+		} else if (intCard2Number == 0) {
+			nGen(con);
+			intCard2Number = intGenNumber;
+			intCard2Suit = intGenSuit;
+		} else if (intCard3Number == 0) {
+			nGen(con);
+			intCard3Number = intGenNumber;
+			intCard3Suit = intGenSuit;
+		} else if (intCard4Number == 0) {
+			nGen(con);
+			intCard4Number = intGenNumber;
+			intCard4Suit = intGenSuit;
+		} else if (intCard5Number == 0) {
+			nGen(con);
+			intCard5Number = intGenNumber;
+			intCard5Suit = intGenSuit;
+		}
 	}
 }
 		
