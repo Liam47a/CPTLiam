@@ -16,19 +16,21 @@ public class CPTLiam {
 		
 	// 1st card stats
 	static int intCard1Number = 0;
-	static int intCard1Suit = 0;
+	static int intCard1Suit = 1;
 	// 2nd card stats
 	static int intCard2Number = 0;
-	static int intCard2Suit = 0;
+	static int intCard2Suit = 1;
 	// 3rd card stats
 	static int intCard3Number = 0;
-	static int intCard3Suit = 0;
+	static int intCard3Suit = 1;
 	// 4th card stats
 	static int intCard4Number = 0;
-	static int intCard4Suit = 0;
+	static int intCard4Suit = 1;
 	// 5th card stats
 	static int intCard5Number = 0;
-	static int intCard5Suit = 0;
+	static int intCard5Suit = 1;
+	
+	static String strCardNumber = "";
 		
 	static int intMoney = 1000;
 	
@@ -37,19 +39,111 @@ public class CPTLiam {
 		System.out.println("Current working directory: " + System.getProperty("user.dir"));
 		con.setBackgroundColor(new Color(3, 80, 210));
 		BufferedImage imgClub = con.loadImage("clubIcon.png");
+		BufferedImage imgDiamond = con.loadImage("diamondIcon.png");
+		BufferedImage imgHeart = con.loadImage("heartIcon.png");
+		BufferedImage imgSpade = con.loadImage("spadeIcon.png");
+		// Core game loop 
 		while (blnIsRunning == true) {
-			con.drawImage(imgClub, 370, 500);
-			con.drawImage(imgClub, 590, 500);
-			con.drawImage(imgClub, 810, 500);
-			con.drawImage(imgClub, 1030, 500);
-			con.drawImage(imgClub, 1250, 500);
+			while (intCard1Number == 0 || intCard2Number == 0 || intCard3Number == 0 || intCard4Number == 0 || intCard5Number == 0) {
+				cardUpdater(con);
+			}
+			// Card 1
+			con.setDrawColor(new Color(255, 255, 255));
+			con.fillRect(410, 510, 180, 230);
+			
+			// Suit Visuals
+			
+			if (intCard1Suit == 1) {
+				con.drawImage(imgClub, 370, 500);
+			} else if (intCard1Suit == 2) {
+				con.drawImage(imgDiamond, 370, 500);
+			} else if (intCard1Suit == 3) {
+				con.drawImage(imgHeart, 370, 500);
+			} else if (intCard1Suit == 4) {
+				con.drawImage(imgSpade, 370, 500);
+			}
+			
+			// Number Visuals
+			
+			con.setDrawColor(new Color(0, 0, 0));
+			if (intCard1Number == 1) { // Ace
+				con.drawString("A", 550, 525);
+			} else if (intCard1Number == 11) { // Jack
+				con.drawString("J", 550, 525);
+			} else if (intCard1Number == 12) { // Queen
+				con.drawString("Q", 550, 525);
+			} else if (intCard1Number == 13) { // King
+				con.drawString("K", 550, 525);
+			} else { // Numbers 2-10 
+				strCardNumber = Integer.toString(intCard1Number);
+				con.drawString(strCardNumber, 550, 525);
+			}
+			// Card 2
+			con.setDrawColor(new Color(255, 255, 255));
+			con.fillRect(630, 510, 180, 230);
+			if (intCard2Suit == 1) {
+				con.drawImage(imgClub, 590, 500);
+			} else if (intCard2Suit == 2) {
+				con.drawImage(imgDiamond, 590, 500);
+			} else if (intCard2Suit == 3) {
+				con.drawImage(imgHeart, 590, 500);
+			} else if (intCard2Suit == 4) {
+				con.drawImage(imgSpade, 590, 500);
+			}
+			
+			// Number Visuals (+222)
+			
+			con.setDrawColor(new Color(0, 0, 0));
+			if (intCard2Number == 1) { // Ace
+				con.drawString("A", 772, 525);
+			} else if (intCard2Number == 11) { // Jack
+				con.drawString("J", 772, 525);
+			} else if (intCard2Number == 12) { // Queen
+				con.drawString("Q", 772, 525);
+			} else if (intCard2Number == 13) { // King
+				con.drawString("K", 772, 525);
+			} else { // Numbers 2-10 
+				strCardNumber = Integer.toString(intCard2Number);
+				con.drawString(strCardNumber, 780, 525);
+			}
+			// Card 3
+			con.setDrawColor(new Color(255, 255, 255));
+			con.fillRect(850, 510, 180, 230);
+			if (intCard3Suit == 1) {
+				con.drawImage(imgClub, 810, 500);
+			} else if (intCard3Suit == 2) {
+				con.drawImage(imgDiamond, 810, 500);
+			} else if (intCard3Suit == 3) {
+				con.drawImage(imgHeart, 810, 500);
+			} else if (intCard3Suit == 4) {
+				con.drawImage(imgSpade, 810, 500);
+			}
+			// Card 4
+			con.fillRect(1070, 510, 180, 230);
+			if (intCard4Suit == 1) {
+				con.drawImage(imgClub, 1030, 500);
+			} else if (intCard4Suit == 2) {
+				con.drawImage(imgDiamond, 1030, 500);
+			} else if (intCard4Suit == 3) {
+				con.drawImage(imgHeart, 1030, 500);
+			} else if (intCard4Suit == 4) {
+				con.drawImage(imgSpade, 1030, 500);
+			}
+			// Card 5
+			con.fillRect(1290, 510, 180, 230);
+			if (intCard5Suit == 1) {
+				con.drawImage(imgClub, 1250, 500);
+			} else if (intCard5Suit == 2) {
+				con.drawImage(imgDiamond, 1250, 500);
+			} else if (intCard5Suit == 3) {
+				con.drawImage(imgHeart, 1250, 500);
+			} else if (intCard5Suit == 4) {
+				con.drawImage(imgSpade, 1250, 500);
+			}
+			// [-----]
 			con.repaint();
 			con.sleep(100);
 		
-		}
-		
-		while (intCard1Number == 0 || intCard2Number == 0 || intCard3Number == 0 || intCard4Number == 0 || intCard5Number == 0) {
-			cardUpdater(con);
 		}
 	}
 	static void nGen(Console con) {
@@ -63,6 +157,7 @@ public class CPTLiam {
 			nGen(con);
 			intCard1Number = intGenNumber;
 			intCard1Suit = intGenSuit;
+			System.out.println(intCard1Suit);
 		} else if (intCard2Number == 0) {
 			nGen(con);
 			intCard2Number = intGenNumber;
