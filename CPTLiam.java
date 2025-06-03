@@ -1,6 +1,7 @@
 import arc.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 public class CPTLiam {
 	static boolean blnIsRunning = true;
@@ -10,6 +11,12 @@ public class CPTLiam {
 	static int intGenSuit = 0;
 		
 	static int intNum = 0;
+	
+	static int int1HighNum = 0;
+	static int int2HighNum = 0;
+	static int int3HighNum = 0;
+	static int int4HighNum = 0;
+	static int int5HighNum = 0;
 		
 	static int intCardNumber = 0;
 	static int intSuitNumber = 0;
@@ -40,6 +47,8 @@ public class CPTLiam {
 	static int intMoney = 1000;
 	
 	static int intKeyPressed;
+	
+	static boolean blnStraightSort = false;
 	
 	// Tracks the stage of the game 
 	static int intGameStage = 0;
@@ -76,6 +85,7 @@ public class CPTLiam {
 				if (intGameStage < 2) { // If no reshuffles have occured yet
 					// Enable the reshuffle process to start
 					intGameStage = intGameStage + 1;
+					con.println("Game stage: "+intGameStage); 
 					blnStageChange = true;
 				}
 				if (intGameStage == 1) {
@@ -93,12 +103,46 @@ public class CPTLiam {
 						intCard5Number = 0;
 					}
 				}
-				if (intGameStage == 2) {
-					// Final stage of the game, will now check what card 
-					// combinations the player has and will reward them accordingly
-				}
-				cardUpdater(con);
 			}
+			if (intGameStage == 2 && blnStraightSort == false) {
+				con.println("Not done!");
+				// Final stage of the game, will now check what card 
+				// combinations the player has and will reward them accordingly
+					
+				// Straight
+				int[] cardNumbers = new int[5];
+				cardNumbers[0] = intCard1Number;
+				cardNumbers[1] = intCard2Number;
+				cardNumbers[2] = intCard3Number;
+				cardNumbers[3] = intCard4Number;
+				cardNumbers[4] = intCard5Number;
+    
+				Arrays.sort(cardNumbers);
+    
+				int1HighNum = cardNumbers[4];
+				int2HighNum = cardNumbers[3];
+				int3HighNum = cardNumbers[2];
+				int4HighNum = cardNumbers[1];
+				int5HighNum = cardNumbers[0];
+    
+				// Sorting (greatest to least)
+				if (int1HighNum > int2HighNum && int2HighNum > int3HighNum && 
+				int3HighNum > int4HighNum && int4HighNum > int5HighNum) {
+					blnStraightSort = true;
+					con.println("Sorted successfully!");
+					con.println(int1HighNum);
+					con.println(int2HighNum);
+					con.println(int3HighNum);
+					con.println(int4HighNum);
+					con.println(int5HighNum);
+					if (int1HighNum == int2HighNum - 1 && int2HighNum == int3HighNum - 1 && int3HighNum == int4HighNum - 1 && int4HighNum == int5HighNum - 1) {
+						// Straight
+						con.println("STRAIGHT!");
+					}
+				}
+			}
+						
+			cardUpdater(con);
 			if (intKeyPressed == 49) {
 				// If key 1 pressed, lock Card 1
 				blnCard1Lock = true;
@@ -117,9 +161,11 @@ public class CPTLiam {
 			}
 			if (intKeyPressed == 53) {
 				// If key 5 pressed, lock Card 5 
+				blnCard5Lock = true;
 			}
 			while (intCard1Number == 0 || intCard2Number == 0 || intCard3Number == 0 || intCard4Number == 0 || intCard5Number == 0) {
 				cardUpdater(con);
+				con.println("Updating...");
 			}
 			// Card 1
 			con.setDrawColor(new Color(255, 255, 255));
