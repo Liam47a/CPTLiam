@@ -48,7 +48,13 @@ public class CPTLiam {
 	
 	static int intKeyPressed;
 	
+	static boolean blnEnterKeyCooldown = false;
+	
 	static boolean blnStraightSort = false;
+	
+	static boolean blnIsStraight = false; 
+	static boolean blnIsJacksorBetter = false; 
+	static int intJackCheck = 0;
 	
 	// Tracks the stage of the game 
 	static int intGameStage = 0;
@@ -68,6 +74,11 @@ public class CPTLiam {
 		cardUpdater(con);
 		// Core game loop
 		while (blnIsRunning == true) {
+			if (blnIsStraight == true) {
+				con.println("Straight!!");
+			} else if (blnIsJacksorBetter == true) {
+				con.println("Jacks or Better!!!");
+			}
 			if (blnStageChange == true) {
 					con.setBackgroundColor(new Color(3, 80, 210));
 					blnStageChange = false;
@@ -82,15 +93,17 @@ public class CPTLiam {
 			con.println(intKeyPressed);
 			if (intKeyPressed == 10) {
 				// If enter key pressed
-				if (intGameStage < 2) { // If no reshuffles have occured yet
+				if (intGameStage < 2 && blnEnterKeyCooldown == false) { // If no reshuffles have occured yet
 					// Enable the reshuffle process to start
+					blnEnterKeyCooldown = true;
 					intGameStage = intGameStage + 1;
 					con.println("Game stage: "+intGameStage); 
 					blnStageChange = true;
 				}
-				if (intGameStage == 1) {
-					// Start the reshuffle, any unlocked cards will be shuffled
-					// Locked cards will stay the same
+				if (intGameStage == 1 && blnEnterKeyCooldown == false) {
+				// Start the reshuffle, any unlocked cards will be shuffled
+				// Locked cards will stay the same
+					blnEnterKeyCooldown = true;
 					if (blnCard1Lock == false) {
 						intCard1Number = 0; 
 					} if (blnCard2Lock == false) {
@@ -104,11 +117,46 @@ public class CPTLiam {
 					}
 				}
 			}
+			if (intKeyPressed != 10) {
+			// This gives back enter key functionalitiy to the user, after they have let go out it
+				blnEnterKeyCooldown = false; 
+			}
 			if (intGameStage == 2 && blnStraightSort == false) {
 				con.println("Not done!");
 				// Final stage of the game, will now check what card 
 				// combinations the player has and will reward them accordingly
-					
+				
+				if (intCard1Number == 1) {
+					intCard1Number = 14; 
+				} if (intCard2Number == 2) {
+					intCard2Number = 14; 
+				} if (intCard3Number == 3) {
+					intCard3Number = 14;
+				} if (intCard4Number == 4) {
+					intCard4Number = 14;
+				} if (intCard5Number == 5) {
+					intCard5Number = 14; 
+				}
+				
+				/* Jacks or Better
+				if (intCard1Number > 10) {
+					intJackCheck = intJackCheck + 1;
+				} if (intCard2Number > 10) {
+					intJackCheck = intJackCheck + 1;
+				} if (intCard3Number > 10) {
+					intJackCheck = intJackCheck + 1;
+				} if (intCard4Number > 10) {
+					intJackCheck = intJackCheck + 1;
+				} if (intCard5Number > 10) {
+					intJackCheck = intJackCheck + 1;
+				}
+				if (intJackCheck >= 2) {
+					con.println("JACK!");
+					blnIsJacksorBetter = true; 
+				}
+				*/
+				
+				
 				// Straight
 				int[] cardNumbers = new int[5];
 				cardNumbers[0] = intCard1Number;
@@ -138,7 +186,12 @@ public class CPTLiam {
 					if (int1HighNum == int2HighNum - 1 && int2HighNum == int3HighNum - 1 && int3HighNum == int4HighNum - 1 && int4HighNum == int5HighNum - 1) {
 						// Straight
 						con.println("STRAIGHT!");
+						blnIsStraight = true;
 					}
+				}
+				if (int5HighNum > 10 && int4HighNum > 10) {
+					con.println("Jacks or Better!");
+					blnIsJacksorBetter = true; 
 				}
 			}
 						
@@ -186,7 +239,7 @@ public class CPTLiam {
 			// Number Visuals
 			
 			con.setDrawColor(new Color(0, 0, 0));
-			if (intCard1Number == 1) { // Ace
+			if (intCard1Number == 1 || intCard1Number == 14) { // Ace
 				con.drawString("A", 555, 525);
 			} else if (intCard1Number == 11) { // Jack
 				con.drawString("J", 555, 525);
@@ -214,7 +267,7 @@ public class CPTLiam {
 			// Number Visuals (+222)
 			
 			con.setDrawColor(new Color(0, 0, 0));
-			if (intCard2Number == 1) { // Ace
+			if (intCard2Number == 1 || intCard2Number == 14) { // Ace
 				con.drawString("A", 772, 525);
 			} else if (intCard2Number == 11) { // Jack
 				con.drawString("J", 772, 525);
@@ -242,7 +295,7 @@ public class CPTLiam {
 			// Number Visuals (+222)
 			
 			con.setDrawColor(new Color(0, 0, 0));
-			if (intCard3Number == 1) { // Ace
+			if (intCard3Number == 1 || intCard3Number == 14) { // Ace
 				con.drawString("A", 994, 525);
 			} else if (intCard3Number == 11) { // Jack
 				con.drawString("J", 994, 525);
@@ -271,7 +324,7 @@ public class CPTLiam {
 			// Number Visuals (+222)
 			
 			con.setDrawColor(new Color(0, 0, 0));
-			if (intCard4Number == 1) { // Ace
+			if (intCard4Number == 1 || intCard4Number == 14) { // Ace
 				con.drawString("A", 1216, 525);
 			} else if (intCard4Number == 11) { // Jack
 				con.drawString("J", 1216, 525);
@@ -300,7 +353,7 @@ public class CPTLiam {
 			// Number Visuals (+222)
 			
 			con.setDrawColor(new Color(0, 0, 0));
-			if (intCard5Number == 1) { // Ace
+			if (intCard5Number == 1 || intCard5Number == 14) { // Ace
 				con.drawString("A", 1438, 525);
 			} else if (intCard5Number == 11) { // Jack
 				con.drawString("J", 1438, 525);
@@ -316,6 +369,7 @@ public class CPTLiam {
 			// [-----]
 			con.repaint();
 			con.sleep(50);
+			cardUpdater(con);
 		
 		}
 	}
