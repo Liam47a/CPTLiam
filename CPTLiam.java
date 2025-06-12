@@ -39,7 +39,8 @@ public class CPTLiam {
     static String strCardNumber = "";
     
     static int intMoney = 1000;
-    static int intBet = 25; 
+    static int intBet = 0; 
+    static boolean blnIsPlacingBet = false; 
     
     static int intKeyPressed;
     
@@ -84,11 +85,13 @@ public class CPTLiam {
     static int intTripletCount = 0; 
     static int intQuadCount = 0;
     
-    static int intGameStage = 0;
+    static int intGameStage = -1;
     static boolean blnStageChange = false; 
 
     static int intUsedCards[] = new int[53];
     static int intUsedCount = 0;
+    
+    static boolean blnSignal = true;
     
     public static void main(String[] args) {
         Console con = new Console(1920, 1080);
@@ -104,34 +107,53 @@ public class CPTLiam {
             intUsedCards[intForLooper] = 0;
         }
         
-        cardUpdater(con);
         while (blnIsRunning == true) {
-            cardUpdater(con);
+			con.println(intGameStage);
+			if (intGameStage > -1) {
+				cardUpdater(con);
+			}
             if (blnStageChange == true) {
 				con.setBackgroundColor(new Color(3, 80, 210));
 				blnStageChange = false;
 			} if (blnIsRoyalFlush == true) {
 				con.drawString("Royal Flush! +" + (intBet * 800) + " dollars (800x your bet)", 500, 900);
+				blnSignal = true; 
 			} else if (blnIsStraightFlush == true) {
 				con.drawString("Straight Flush! +" + (intBet * 50) + " dollars (50x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsFourKind == true) {
 				con.drawString("Four of a Kind! +" + (intBet * 25) + " dollars (25x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsFullHouse == true) {
 				con.drawString("Full House! +" + (intBet * 9) + " dollars (9x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsFlush == true) {
 				con.drawString("Flush! +" + (intBet * 6) + " dollars (6x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsStraight == true) {
 				con.drawString("Straight! +" + (intBet * 4) + " dollars (4x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsThreeKind == true) {
 				con.drawString("Three of a Kind! +" + (intBet * 3) + " dollars (3x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsTwoPair == true) {
 				con.drawString("Two Pair! +" + (intBet * 2) + " dollars (2x your bet)", 500, 900);
+				blnSignal = true;
 			} else if (blnIsJacksorBetter == true) {
 				con.drawString("Jacks or Better! +" + (intBet * 1) + " dollars (1x your bet)", 500, 900);
+				blnSignal = true; 
 			} else if (intGameStage == 2) {
 				con.drawString("Nothing...you lost " + intBet + " dollars", 500, 900);
+				blnSignal = true;
+			}
+			if (intGameStage == -1) {
+				if (blnIsPlacingBet == false && blnSignal == true) {
+					intBet = 0;
+				}
 			}
             if (intGameStage == 0) {
+				blnSignal = false; 
+				blnIsPlacingBet = false; 
 				blnFinished = false;
 				blnIsRoyalFlush = false;
 				blnIsFourKind = false;
@@ -160,17 +182,26 @@ public class CPTLiam {
 				intDiamondNumber = 0;
 				intHeartNumber = 0;
 				intSpadeNumber = 0; 
+			} if (intGameStage == 0) {
                 con.drawString("Press Enter to Shuffle Cards", 500, 800);
-                con.drawString("Press the Number Keys to Lock-In Cards: (1, 2, 3, 4, 5)", 500, 900);
-                con.drawString("Money: $" + intMoney, 50, 50);
+                con.drawString("Press the Number Keys to Lock-In Cards: (1, 2, 3, 4, 5)", 350, 900);
+                con.drawString("Money: $" + intMoney, 100, 50);
+                con.drawString("Bet: $" + intBet, 100, 75);
             } if (intGameStage == 1) {
                 con.drawString("Press Enter to Submit Cards", 500, 800);
-                con.drawString("Money: $" + intMoney, 50, 50);
+                con.drawString("Money: $" + intMoney, 100, 50);
+                con.drawString("Bet: $" + intBet, 100, 75);
             } if (intGameStage == 2) {
                 con.drawString("Press Enter to Start New Round", 500, 800);
-                con.drawString("Money: $" + intMoney, 50, 50);
-            } else if (intGameStage == 3) {
-				intGameStage = 0;
+                con.drawString("Money: $" + intMoney, 100, 50);
+                con.drawString("Bet: $" + intBet, 100, 75);
+            } if (intGameStage == -1) {
+				con.setDrawColor(new Color(255, 255, 255));
+                con.drawString("Press B to add 10 dollars to your bet, Press N to remove 10 dollars from your bet, Press M to confirm bet", 200, 800);
+                con.drawString("Money: $" + intMoney, 100, 50);
+                con.drawString("Bet: $" + intBet, 100, 75);
+            } if (intGameStage == 3) {
+				intGameStage = -1;
 				blnCard1Lock = false;
 				blnCard2Lock = false;
 				blnCard3Lock = false;
@@ -202,7 +233,10 @@ public class CPTLiam {
         intUsedCount = 0;
         intForLooper = 0;
     }
+			// Log the keys that the player is pressing
             intKeyPressed = con.currentKey();
+            con.println(intKeyPressed); 
+            // If the player presses the enter key 
             if (intKeyPressed == 10) {
                 if (blnEnterKeyCooldown == false) {
                     intGameStage = intGameStage + 1;
@@ -230,7 +264,7 @@ public class CPTLiam {
                         }
                         intUsedCount = 0;
                     } else if (intGameStage == 3) {
-                        intGameStage = 0;
+                        intGameStage = -1;
                         blnCard1Lock = false;
                         blnCard2Lock = false;
                         blnCard3Lock = false;
@@ -557,159 +591,187 @@ public class CPTLiam {
             blnIsTwoPair = true; 
         // Jacks or Better
         } else if (intJackCount >= 2 || intQueenCount >= 2 || intKingCount >= 2 || intAceCount >= 2) {
-            intMoney = intMoney + intBet * 1; 
             blnIsJacksorBetter = true; 
         } else {
             intMoney = intMoney - intBet; 
         }
 		blnFinished = true; 
     }
-            
+            // If 1 is pressed (lock the 1st card) 
             if (intKeyPressed == 49) {
                 blnCard1Lock = !blnCard1Lock;
             }
+            // If 2 is pressed (lock the 2nd card)
             if (intKeyPressed == 50) {
                 blnCard2Lock = !blnCard2Lock;
             }
+            // If 3 is pressed (lock the 3rd card)
             if (intKeyPressed == 51) {
                 blnCard3Lock = !blnCard3Lock;
             }
+            // If 4 is pressed (lock the 4th card)
             if (intKeyPressed == 52) {
                 blnCard4Lock = !blnCard4Lock;
             }
+            // If 5 is pressed (lock the 5th card)
             if (intKeyPressed == 53) {
                 blnCard5Lock = !blnCard5Lock;
             }
+            // If B is pressed (increase bet)
+            if (intKeyPressed == 66 && intGameStage == -1) {
+				// Prevents people from betting more then they have
+				if (intBet < intMoney) {
+					con.setBackgroundColor(new Color(3, 80, 210));
+					intBet = intBet + 10; 
+					blnIsPlacingBet = true; 
+				}
+			}
+			// If N is pressed (decrease bet)
+			if (intKeyPressed == 78 && intGameStage == -1) {
+				if (intBet > 0) {
+					con.setBackgroundColor(new Color(3, 80, 210));
+					intBet = intBet - 10; 
+				}
+			}
+			
+			// If M is pressed (confirm bet)
+			if (intKeyPressed == 77 && intGameStage == -1) {
+				intGameStage = intGameStage + 1;
+				con.repaint();
+				blnStageChange = true; 
+			}
             
-            // Card 1
-            con.setDrawColor(blnCard1Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
-            con.fillRect(460, 530, 180, 230);
-            if (intCard1Suit == 1) {
-                con.drawImage(imgClub, 420, 520);
-            } else if (intCard1Suit == 2) {
-                con.drawImage(imgDiamond, 420, 520);
-            } else if (intCard1Suit == 3) {
-                con.drawImage(imgHeart, 420, 520);
-            } else if (intCard1Suit == 4) {
-                con.drawImage(imgSpade, 420, 520);
-            }
-            con.setDrawColor(new Color(0, 0, 0));
-            if (intCard1Number == 1 || intCard1Number == 14) {
-                con.drawString("A", 555, 550);
-            } else if (intCard1Number == 11) {
-                con.drawString("J", 555, 550);
-            } else if (intCard1Number == 12) {
-                con.drawString("Q", 555, 550);
-            } else if (intCard1Number == 13) {
-                con.drawString("K", 555, 550);
-            } else {
-                strCardNumber = Integer.toString(intCard1Number);
-                con.drawString(strCardNumber, 555, 550);
-            }
+            if (intGameStage > -1) {
+				// Card 1
+				con.setDrawColor(blnCard1Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
+				con.fillRect(460, 530, 180, 230);
+				if (intCard1Suit == 1) {
+					con.drawImage(imgClub, 420, 520);
+				} else if (intCard1Suit == 2) {
+					con.drawImage(imgDiamond, 420, 520);
+				} else if (intCard1Suit == 3) {
+					con.drawImage(imgHeart, 420, 520);
+				} else if (intCard1Suit == 4) {
+					con.drawImage(imgSpade, 420, 520);
+				}
+				con.setDrawColor(new Color(0, 0, 0));
+				if (intCard1Number == 1 || intCard1Number == 14) {
+					con.drawString("A", 555, 550);
+				} else if (intCard1Number == 11) {
+					con.drawString("J", 555, 550);
+				} else if (intCard1Number == 12) {
+					con.drawString("Q", 555, 550);
+				} else if (intCard1Number == 13) {
+					con.drawString("K", 555, 550);
+				} else {
+					strCardNumber = Integer.toString(intCard1Number);
+					con.drawString(strCardNumber, 555, 550);
+				}
             
-            // Card 2
-            con.setDrawColor(blnCard2Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
-            con.fillRect(680, 530, 180, 230);
-            if (intCard2Suit == 1) {
-                con.drawImage(imgClub, 640, 520);
-            } else if (intCard2Suit == 2) {
-                con.drawImage(imgDiamond, 640, 520);
-            } else if (intCard2Suit == 3) {
-                con.drawImage(imgHeart, 640, 520);
-            } else if (intCard2Suit == 4) {
-                con.drawImage(imgSpade, 640, 520);
-            }
-            con.setDrawColor(new Color(0, 0, 0));
-            if (intCard2Number == 1 || intCard2Number == 14) {
-                con.drawString("A", 772, 550);
-            } else if (intCard2Number == 11) {
-                con.drawString("J", 772, 550);
-            } else if (intCard2Number == 12) {
-                con.drawString("Q", 772, 550);
-            } else if (intCard2Number == 13) {
-                con.drawString("K", 772, 550);
-            } else {
-                strCardNumber = Integer.toString(intCard2Number);
-                con.drawString(strCardNumber, 772, 550);
-            }
+				// Card 2
+				con.setDrawColor(blnCard2Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
+				con.fillRect(680, 530, 180, 230);
+				if (intCard2Suit == 1) {
+					con.drawImage(imgClub, 640, 520);
+				} else if (intCard2Suit == 2) {
+					con.drawImage(imgDiamond, 640, 520);
+				} else if (intCard2Suit == 3) {
+					con.drawImage(imgHeart, 640, 520);
+				} else if (intCard2Suit == 4) {
+					con.drawImage(imgSpade, 640, 520);
+				}
+				con.setDrawColor(new Color(0, 0, 0));
+				if (intCard2Number == 1 || intCard2Number == 14) {
+					con.drawString("A", 772, 550);
+				} else if (intCard2Number == 11) {
+					con.drawString("J", 772, 550);
+				} else if (intCard2Number == 12) {
+					con.drawString("Q", 772, 550);
+				} else if (intCard2Number == 13) {
+					con.drawString("K", 772, 550);
+				} else {
+					strCardNumber = Integer.toString(intCard2Number);
+					con.drawString(strCardNumber, 772, 550);
+				}
             
-            // Card 3
-            con.setDrawColor(blnCard3Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
-            con.fillRect(900, 530, 180, 230);
-            if (intCard3Suit == 1) {
-                con.drawImage(imgClub, 860, 520);
-            } else if (intCard3Suit == 2) {
-                con.drawImage(imgDiamond, 860, 520);
-            } else if (intCard3Suit == 3) {
-                con.drawImage(imgHeart, 860, 520);
-            } else if (intCard3Suit == 4) {
-                con.drawImage(imgSpade, 860, 520);
-            }
-            con.setDrawColor(new Color(0, 0, 0));
-            if (intCard3Number == 1 || intCard3Number == 14) {
-                con.drawString("A", 994, 550);
-            } else if (intCard3Number == 11) {
-                con.drawString("J", 994, 550);
-            } else if (intCard3Number == 12) {
-                con.drawString("Q", 994, 550);
-            } else if (intCard3Number == 13) {
-                con.drawString("K", 994, 550);
-            } else {
-                strCardNumber = Integer.toString(intCard3Number);
-                con.drawString(strCardNumber, 994, 550);
-            }
+				// Card 3
+				con.setDrawColor(blnCard3Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
+				con.fillRect(900, 530, 180, 230);
+				if (intCard3Suit == 1) {
+					con.drawImage(imgClub, 860, 520);
+				} else if (intCard3Suit == 2) {
+					con.drawImage(imgDiamond, 860, 520);
+				} else if (intCard3Suit == 3) {
+					con.drawImage(imgHeart, 860, 520);
+				} else if (intCard3Suit == 4) {
+					con.drawImage(imgSpade, 860, 520);
+				}
+				con.setDrawColor(new Color(0, 0, 0));
+				if (intCard3Number == 1 || intCard3Number == 14) {
+					con.drawString("A", 994, 550);
+				} else if (intCard3Number == 11) {
+					con.drawString("J", 994, 550);
+				} else if (intCard3Number == 12) {
+					con.drawString("Q", 994, 550);
+				} else if (intCard3Number == 13) {
+					con.drawString("K", 994, 550);
+				} else {
+					strCardNumber = Integer.toString(intCard3Number);
+					con.drawString(strCardNumber, 994, 550);
+				}
             
-            // Card 4
-            con.setDrawColor(blnCard4Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
-            con.fillRect(1120, 530, 180, 230);
-            if (intCard4Suit == 1) {
-                con.drawImage(imgClub, 1080, 520);
-            } else if (intCard4Suit == 2) {
-                con.drawImage(imgDiamond, 1080, 520);
-            } else if (intCard4Suit == 3) {
-                con.drawImage(imgHeart, 1080, 520);
-            } else if (intCard4Suit == 4) {
-                con.drawImage(imgSpade, 1080, 520);
-            }
-            con.setDrawColor(new Color(0, 0, 0));
-            if (intCard4Number == 1 || intCard4Number == 14) {
-                con.drawString("A", 1216, 550);
-            } else if (intCard4Number == 11) {
-                con.drawString("J", 1216, 550);
-            } else if (intCard4Number == 12) {
-                con.drawString("Q", 1216, 550);
-            } else if (intCard4Number == 13) {
-                con.drawString("K", 1216, 550);
-            } else {
-                strCardNumber = Integer.toString(intCard4Number);
-                con.drawString(strCardNumber, 1216, 550);
-            }
+				// Card 4
+				con.setDrawColor(blnCard4Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
+				con.fillRect(1120, 530, 180, 230);
+				if (intCard4Suit == 1) {
+					con.drawImage(imgClub, 1080, 520);
+				} else if (intCard4Suit == 2) {
+					con.drawImage(imgDiamond, 1080, 520);
+				} else if (intCard4Suit == 3) {
+					con.drawImage(imgHeart, 1080, 520);
+				} else if (intCard4Suit == 4) {
+					con.drawImage(imgSpade, 1080, 520);
+				}
+				con.setDrawColor(new Color(0, 0, 0));
+				if (intCard4Number == 1 || intCard4Number == 14) {
+					con.drawString("A", 1216, 550);
+				} else if (intCard4Number == 11) {
+					con.drawString("J", 1216, 550);
+				} else if (intCard4Number == 12) {
+					con.drawString("Q", 1216, 550);
+				} else if (intCard4Number == 13) {
+					con.drawString("K", 1216, 550);
+				} else {
+					strCardNumber = Integer.toString(intCard4Number);
+					con.drawString(strCardNumber, 1216, 550);
+				}
             
-            // Card 5
-            con.setDrawColor(blnCard5Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
-            con.fillRect(1340, 530, 180, 230);
-            if (intCard5Suit == 1) {
-                con.drawImage(imgClub, 1300, 520);
-            } else if (intCard5Suit == 2) {
-                con.drawImage(imgDiamond, 1300, 520);
-            } else if (intCard5Suit == 3) {
-                con.drawImage(imgHeart, 1300, 520);
-            } else if (intCard5Suit == 4) {
-                con.drawImage(imgSpade, 1300, 520);
-            }
-            con.setDrawColor(new Color(0, 0, 0));
-            if (intCard5Number == 1 || intCard5Number == 14) {
-                con.drawString("A", 1438, 550);
-            } else if (intCard5Number == 11) {
-                con.drawString("J", 1438, 550);
-            } else if (intCard5Number == 12) {
-                con.drawString("Q", 1438, 550);
-            } else if (intCard5Number == 13) {
-                con.drawString("K", 1438, 550);
-            } else {
-                strCardNumber = Integer.toString(intCard5Number);
-                con.drawString(strCardNumber, 1438, 550);
-            }
+				// Card 5
+				con.setDrawColor(blnCard5Lock ? new Color(200, 150, 200) : new Color(255, 255, 255));
+				con.fillRect(1340, 530, 180, 230);
+				if (intCard5Suit == 1) {
+					con.drawImage(imgClub, 1300, 520);
+				} else if (intCard5Suit == 2) {
+					con.drawImage(imgDiamond, 1300, 520);
+				} else if (intCard5Suit == 3) {
+					con.drawImage(imgHeart, 1300, 520);
+				} else if (intCard5Suit == 4) {
+					con.drawImage(imgSpade, 1300, 520);
+				}
+				con.setDrawColor(new Color(0, 0, 0));
+				if (intCard5Number == 1 || intCard5Number == 14) {
+					con.drawString("A", 1438, 550);
+				} else if (intCard5Number == 11) {
+					con.drawString("J", 1438, 550);
+				} else if (intCard5Number == 12) {
+					con.drawString("Q", 1438, 550);
+				} else if (intCard5Number == 13) {
+					con.drawString("K", 1438, 550);
+				} else {
+					strCardNumber = Integer.toString(intCard5Number);
+					con.drawString(strCardNumber, 1438, 550);
+				}
+			}
             
             con.repaint();
             con.sleep(50);
